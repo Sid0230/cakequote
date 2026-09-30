@@ -6,6 +6,7 @@
 <meta name="description" content="Free custom cake pricing, quoting and order tracker for independent bakers.">
 <title>CakeQuote — Custom Cake Pricing & Quotes</title>
 <style>
+#betaGate{position:fixed;inset:0;z-index:99999;background:#faf8f3;display:flex;align-items:center;justify-content:center;padding:20px}#betaGate .gateCard{width:min(440px,100%);background:#fff;border:1px solid #e7ddd5;border-radius:24px;padding:28px;box-shadow:0 12px 40px #45372f18}#betaGate h1{font-size:28px;margin:0 0 8px}#betaGate p{color:#74685f;line-height:1.5}#betaGate input{margin-top:8px}#betaGate button{margin-top:12px;width:100%}#betaError{color:#9a5b00;font-size:13px;min-height:20px;margin-top:8px}
 :root{--ink:#45372f;--muted:#74685f;--bg:#faf8f3;--card:#fff;--accent:#9b4d2c;--soft:#f3ebe5;--line:#e7ddd5;--good:#26734d;--warn:#9a5b00}
 *{box-sizing:border-box}body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;max-width:1050px;margin:auto;padding:18px;background:var(--bg);color:var(--ink)}main{background:var(--card);padding:24px;border-radius:24px;box-shadow:0 8px 30px #45372f12}h1{margin:0 0 6px;font-size:32px}h2{font-size:18px;margin:0 0 12px}.sub{color:var(--muted);margin:0 0 22px}.section{border:1px solid var(--line);border-radius:18px;padding:16px;margin:14px 0}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}label{display:block;font-size:13px;font-weight:650;color:var(--ink)}input,select,textarea{font:inherit;width:100%;padding:10px 11px;margin-top:6px;border:1px solid var(--line);border-radius:10px;background:white;color:var(--ink)}input[type=range]{padding:0}.hint{font-size:12px;color:var(--muted);font-weight:400}.result{margin-top:18px;padding:20px;background:var(--accent);color:white;border-radius:20px}.price{font-size:44px;font-weight:800;line-height:1.1;margin:4px 0 10px}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}.stat{background:#ffffff18;padding:10px;border-radius:12px}.stat small{display:block;opacity:.8}.stat strong{font-size:18px}.breakdown{display:grid;grid-template-columns:1fr 1fr;gap:8px}.row{display:flex;justify-content:space-between;border-bottom:1px solid var(--line);padding:7px 0}.warning,.success{padding:10px 12px;border-radius:10px;margin-top:10px;font-size:13px}.warning{background:#fff3df;color:var(--warn)}.success{background:#eaf7f0;color:var(--good)}button{padding:10px 15px;border:0;border-radius:999px;background:var(--accent);color:white;font-weight:650;cursor:pointer}button.secondary{background:var(--soft);color:var(--ink)}button:disabled{opacity:.45;cursor:not-allowed}.actions{display:flex;flex-wrap:wrap;gap:8px}.quote-meta{display:grid;grid-template-columns:1fr 1fr;gap:12px}.history-item{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}.pill{display:inline-block;padding:4px 9px;border-radius:999px;background:var(--soft);font-size:12px}.item-row{display:grid;grid-template-columns:2fr 70px 1fr 1fr 40px;gap:8px;align-items:end;margin-bottom:8px}.remove{background:#eee;color:#45372f;padding:9px 11px}.print-only{display:none}
 @media(max-width:700px){body{padding:10px}.grid,.quote-meta,.breakdown{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr}.item-row{grid-template-columns:1fr 70px 1fr 1fr 40px}.price{font-size:36px}}
@@ -13,6 +14,7 @@
 </style>
 </head>
 <body>
+<div id="betaGate"><div class="gateCard"><div style="font-size:40px">🎂</div><h1>CakeQuote Beta</h1><p>This is a private beta for invited bakers. Enter your beta access code to continue.</p><label>Beta access code<input id="betaCode" type="password" autocomplete="off" placeholder="Enter access code"></label><button id="betaEnter" type="button">Enter CakeQuote</button><div id="betaError"></div></div></div>
 <main>
 <h1>🎂 CakeQuote</h1>
 <p class="sub">Price custom cakes confidently, create customer-ready quotes, and keep simple order records — free, in your browser.</p>
@@ -155,10 +157,15 @@
 <h2>Recent quotes</h2>
 <div id="history"><p class="hint">No saved quotes yet.</p></div>
 </div>
-<p class="hint no-print">Your quote data is stored locally in your browser. CakeQuote does not need an account.</p>
+<p class="hint no-print">Your quote data is stored locally in your browser. CakeQuote does not need an account. This version is a private beta.</p>
 </main>
 
 <script>
+const BETA_ACCESS_HASH='d9c8e8f0f6e7b9f2a4b2c0d1e6f7a8b9';
+async function betaHash(value){const data=new TextEncoder().encode(value);const digest=await crypto.subtle.digest('SHA-256',data);return Array.from(new Uint8Array(digest)).map(b=>b.toString(16).padStart(2,'0')).join('')}
+async function unlockBeta(){const input=document.getElementById('betaCode');const error=document.getElementById('betaError');if(!input)return;if((await betaHash(input.value.trim()))===BETA_ACCESS_HASH){sessionStorage.setItem('cakequote-beta-ok','1');document.getElementById('betaGate').remove()}else{error.textContent='Invalid access code.';input.select()}}
+if(sessionStorage.getItem('cakequote-beta-ok')!=='1'){document.documentElement.style.overflow='hidden'}else{document.getElementById('betaGate')?.remove()}
+document.addEventListener('DOMContentLoaded',()=>{const b=document.getElementById('betaEnter'),i=document.getElementById('betaCode');if(b){b.onclick=unlockBeta;i?.addEventListener('keydown',e=>{if(e.key==='Enter')unlockBeta()})}})
 const printMode=new URLSearchParams(location.search).get('print')==='1';
 if(printMode){
   const printHtml=sessionStorage.getItem('cakequote-print-html');
