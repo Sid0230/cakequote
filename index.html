@@ -163,7 +163,7 @@
 <script>
 const BETA_ACCESS_HASH='bffaa49140409a9e61ded629c1cd4d5a59d7c23fb05369d54786fdcd9229872e';
 async function betaHash(value){const data=new TextEncoder().encode(value);const digest=await crypto.subtle.digest('SHA-256',data);return Array.from(new Uint8Array(digest)).map(b=>b.toString(16).padStart(2,'0')).join('')}
-async function unlockBeta(){const input=document.getElementById('betaCode');const error=document.getElementById('betaError');if(!input)return;if((await betaHash(input.value.trim()))===BETA_ACCESS_HASH){sessionStorage.setItem('cakequote-beta-ok','1');document.getElementById('betaGate').remove()}else{error.textContent='Invalid access code.';input.select()}}
+async function unlockBeta(){const input=document.getElementById('betaCode');const error=document.getElementById('betaError');if(!input)return;if((await betaHash(input.value.trim()))===BETA_ACCESS_HASH){sessionStorage.setItem('cakequote-beta-ok','1');document.documentElement.style.overflow='';document.body.style.overflow='';document.getElementById('betaGate').remove()}else{error.textContent='Invalid access code.';input.select()}}
 if(sessionStorage.getItem('cakequote-beta-ok')!=='1'){document.documentElement.style.overflow='hidden'}else{document.getElementById('betaGate')?.remove()}
 document.addEventListener('DOMContentLoaded',()=>{const b=document.getElementById('betaEnter'),i=document.getElementById('betaCode');if(b){b.onclick=unlockBeta;i?.addEventListener('keydown',e=>{if(e.key==='Enter')unlockBeta()})}})
 const printMode=new URLSearchParams(location.search).get('print')==='1';
