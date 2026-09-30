@@ -76,6 +76,24 @@
 <div id="breakdown" class="breakdown"><div class="row"><span>Ingredients & materials</span><strong>—</strong></div></div>
 </div>
 
+<div id="pdfQuote" class="print-only">
+<div style="font-size:28px;font-weight:800">🎂 CakeQuote</div>
+<div style="color:#74685f;margin:4px 0 18px">Custom cake quotation</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;border-bottom:1px solid #e7ddd5;padding-bottom:14px;margin-bottom:14px">
+<div><strong>Quote number</strong><br><span id="printQuoteNo">—</span></div>
+<div><strong>Date</strong><br><span id="printDate">—</span></div>
+<div><strong>Customer</strong><br><span id="printCustomer">—</span></div>
+<div><strong>Event date</strong><br><span id="printEventDate">—</span></div>
+</div>
+<h2 id="printCake">Custom cake</h2>
+<div id="printBreakdown"></div>
+<div style="border-top:2px solid #45372f;margin-top:16px;padding-top:12px">
+<div class="row"><span>Recommended customer price</span><strong id="printPrice">—</strong></div>
+<div class="row"><span>Deposit</span><strong id="printDeposit">—</strong></div>
+<div class="row"><span>Balance</span><strong id="printBalance">—</strong></div>
+</div>
+<p style="margin-top:20px">Thank you for choosing CakeQuote. Please reply to confirm your order.</p>
+</div>
 <div class="section">
 <h2>Customer-ready quote</h2>
 <div class="quote-meta">
@@ -146,6 +164,15 @@ function calc(){
  msg='🎂 '+name+' — your quote\n\nHi '+customer+',\n\nTotal price: '+money(totalPrice)+'\n'+(date?'Event / delivery date: '+date+'\n':'')+(d===100?'Full payment due to confirm: '+money(deposit):d>0?'Deposit ('+d+'%): '+money(deposit)+'\nBalance: '+money(balance):'Full payment due on pickup/delivery.')+'\n\nQuote '+currentQuoteNo+'\n\nReply here to confirm your order or ask any questions!';
  }
  $('quote').value=msg||'Your quote message appears here once you\'ve added costs.';
+ $('printQuoteNo').textContent=currentQuoteNo;
+ $('printDate').textContent=new Date().toLocaleDateString(undefined,{dateStyle:'medium'});
+ $('printCustomer').textContent=$('customer').value.trim()||'—';
+ $('printEventDate').textContent=$('eventDate').value?new Date($('eventDate').value+'T00:00:00').toLocaleDateString(undefined,{dateStyle:'medium'}):'—';
+ $('printCake').textContent=$('name').value.trim()||'Custom cake';
+ $('printPrice').textContent=baseCost?money(totalPrice):'—';
+ $('printDeposit').textContent=baseCost?money(deposit):'—';
+ $('printBalance').textContent=baseCost?money(balance):'—';
+ $('printBreakdown').innerHTML=rows.map(r=>'<div class="row"><span>'+r[0]+'</span><strong>'+money(r[1])+'</strong></div>').join('')+(extra?'<div class="row"><span>Additional items</span><strong>'+money(extra)+'</strong></div>':'');
 }
 function snapshot(){return {customer:$('customer').value,phone:$('phone').value,email:$('customerEmail').value,eventDate:$('eventDate').value,name:$('name').value,currency:$('cur').value,mat:$('mat').value,dec:$('dec').value,pack:$('pack').value,del:$('del').value,other:$('other').value,hours:$('hours').value,rate:$('rate').value,over:$('over').value,margin:$('margin').value,deposit:$('deposit').value,items,status,quoteNo:currentQuoteNo,savedAt:new Date().toISOString()}}
 function restore(o){['customer','phone','customerEmail','eventDate','name','cur','mat','dec','pack','del','other','hours','rate','over','margin','deposit'].forEach(k=>{if(o[k]!==undefined)$(k).value=o[k]});items=o.items||[];status=o.status||'Draft';currentQuoteNo=o.quoteNo||newQuoteNo();renderItems();calc()}
