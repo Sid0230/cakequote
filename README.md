@@ -9,3 +9,5 @@ Features: true cost, labor, overhead, recommended price, profit, deposit, balanc
 Enable **Settings → Pages → Source → GitHub Actions**. The included workflow publishes the site.
 
 Expected URL: https://sid0230.github.io/cakequote/
+
+Beta deployment check updated.
