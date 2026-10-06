@@ -3,6 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests">
+<meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=(), usb=()">
+<meta name="robots" content="noindex,nofollow">
 <meta name="description" content="Free custom cake pricing, quoting and order tracker for independent bakers.">
 <title>CakeQuote by Swarivo — Custom Cake Pricing & Quotes</title>
 <style>
@@ -166,7 +170,7 @@ async function betaHash(value){const data=new TextEncoder().encode(value);const 
 async function unlockBeta(){const input=document.getElementById('betaCode');const error=document.getElementById('betaError');if(!input)return;if((await betaHash(input.value.trim()))===BETA_ACCESS_HASH){sessionStorage.setItem('cakequote-beta-ok','1');document.documentElement.style.overflow='';document.body.style.overflow='';document.getElementById('betaGate').remove()}else{error.textContent='Invalid access code.';input.select()}}
 if(sessionStorage.getItem('cakequote-beta-ok')!=='1'){document.documentElement.style.overflow='hidden'}else{document.getElementById('betaGate')?.remove()}
 document.addEventListener('DOMContentLoaded',()=>{const b=document.getElementById('betaEnter'),i=document.getElementById('betaCode');if(b){b.onclick=unlockBeta;i?.addEventListener('keydown',e=>{if(e.key==='Enter')unlockBeta()})}})
-const printMode=new URLSearchParams(location.search).get('print')==='1';
+if(window.top!==window.self){try{window.top.location=window.self.location}catch(e){}}\nconst printMode=new URLSearchParams(location.search).get('print')==='1';
 if(printMode){
   const printHtml=sessionStorage.getItem('cakequote-print-html');
   const printTitle=sessionStorage.getItem('cakequote-print-title')||'CakeQuote';
