@@ -19,6 +19,32 @@
 </head>
 <body>
 <div id="betaGate"><div class="gateCard"><div style="font-size:40px">🎂</div><div class="brand">SWARIVO</div><h1>CakeQuote Beta</h1><p>This is a private beta for invited bakers. Enter your beta access code to continue.</p><label>Beta access code<input id="betaCode" type="password" autocomplete="off" placeholder="Enter access code"></label><button id="betaEnter" type="button">Enter CakeQuote</button><div id="betaError"></div></div></div>
+<script>
+(function(){
+  var code='CAKEBETA26';
+  var gate=document.getElementById('betaGate');
+  var input=document.getElementById('betaCode');
+  var button=document.getElementById('betaEnter');
+  var error=document.getElementById('betaError');
+  document.documentElement.style.overflow='hidden';
+  function unlock(){
+    if(!input||!gate)return;
+    if(input.value.trim()===code){
+      gate.style.display='none';
+      gate.remove();
+      document.documentElement.style.overflow='';
+      document.body.style.overflow='';
+    }else{
+      if(error) error.textContent='Invalid access code.';
+      input.select();
+    }
+  }
+  if(button) button.addEventListener('click',unlock);
+  if(input) input.addEventListener('keydown',function(e){
+    if(e.key==='Enter'){e.preventDefault();unlock();}
+  });
+})();
+</script>
 <main>
 <h1>🎂 CakeQuote</h1><div style="font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:8px">by Swarivo</div>
 <p class="sub">Price custom cakes confidently, create customer-ready quotes, and keep simple order records — free, in your browser.</p>
@@ -165,28 +191,6 @@
 </main>
 
 <script>
-const BETA_ACCESS_CODE='CAKEBETA26';
-function unlockBeta(){
-  const input=document.getElementById('betaCode');
-  const error=document.getElementById('betaError');
-  const gate=document.getElementById('betaGate');
-  if(!input||!error||!gate)return;
-  if(input.value.trim()===BETA_ACCESS_CODE){
-    gate.remove();
-    document.documentElement.style.overflow='';
-    document.body.style.overflow='';
-  }else{
-    error.textContent='Invalid access code.';
-    input.select();
-  }
-}
-document.documentElement.style.overflow='hidden';
-document.addEventListener('DOMContentLoaded',()=>{
-  const b=document.getElementById('betaEnter'),i=document.getElementById('betaCode');
-  if(b)b.addEventListener('click',unlockBeta);
-  if(i)i.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();unlockBeta()}});
-});
-
 const printHtml=sessionStorage.getItem('cakequote-print-html');
 if(printHtml){
   const printTitle=sessionStorage.getItem('cakequote-print-title')||'CakeQuote';
