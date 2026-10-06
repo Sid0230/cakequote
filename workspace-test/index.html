@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>CakeQuote Workspace Test</title>
+</head>
+<body style="font-family:system-ui;max-width:700px;margin:40px auto;padding:20px">
+<h1>CakeQuote Workspace Test</h1>
+<p>This isolated page verifies that workspace-specific quote storage does not mix between bakeries.</p>
+<label>Workspace <input id="workspace" value="bakeology"></label>
+<button id="save">Save test quote</button>
+<button id="show">Show this workspace</button>
+<pre id="out"></pre>
+<script>
+const params=new URLSearchParams(location.search);
+const rawWorkspace=params.get('shop')||document.getElementById('workspace').value||'beta-demo';
+const workspace=rawWorkspace.toLowerCase().replace(/[^a-z0-9_-]/g,'').slice(0,40)||'beta-demo';
+const HISTORY_KEY='cakequote-history:'+workspace;
+const out=document.getElementById('out');
+document.getElementById('workspace').value=workspace;
+function show(){out.textContent=JSON.stringify(JSON.parse(localStorage.getItem(HISTORY_KEY)||'[]'),null,2);}
+document.getElementById('save').onclick=()=>{const q=JSON.parse(localStorage.getItem(HISTORY_KEY)||'[]');q.push({workspace,created:new Date().toISOString(),testQuote:'TEST ONLY'});localStorage.setItem(HISTORY_KEY,JSON.stringify(q));show();};
+document.getElementById('show').onclick=show;
+show();
+</script>
+</body>
+</html>
